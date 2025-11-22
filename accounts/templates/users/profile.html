@@ -1,0 +1,33 @@
+{% extends 'users/home.html' %}
+
+{% block content %}
+<h1>My Profile</h1>
+<hr>
+<img src="{{ user.profile_image.url }}" 
+     alt="Profile Picture" 
+     width="150" height="150" class="rounded-circle">
+
+<form action="{% url 'update_profile_image' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="profile_image" required>
+    <button type="submit" class="btn btn-primary mt-2">Update Image</button>
+</form>
+
+<form action="{% url 'delete_profile_image' %}" method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete Profile Image</button>
+</form>
+
+
+
+<p><strong>First Name:</strong> {{ request.user.first_name }}</p>
+<p><strong>Last Name:</strong> {{ request.user.last_name }}</p>
+<p><strong>Email:</strong> {{ request.user.email }}</p>
+<p><strong>Phone:</strong> {{ request.user.phone_number }}</p>
+<p><strong>City:</strong> {{ request.user.city }}</p>
+<p><strong>DOB:</strong> {{ request.user.dob }}</p>
+<p><strong>Date Joined:</strong> {{ request.user.date_joined}}</p>
+<p><strong>Last login:</strong> {{ request.user.last_login}}</p>
+
+
+{% endblock content %}
