@@ -7,31 +7,12 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from accounts.models import Customer
 from django.contrib.auth.hashers import check_password
-
-
-# def register(request):
-#     if request.method == "POST":
-#         form = CustomerRegistrationForm(request.POST)
-#         if form.is_valid():
-#             user = form.save(commit=False)
-
-#             # Hash password manually
-#             user.set_password(form.cleaned_data['password1'])
-#             user.save()
-
-#             return redirect("login")
-#         else:
-#             print(form.errors)   
-#     else:
-#         form = CustomerRegistrationForm()
-
-#     return render(request, "users/register.html", {"form": form})
+import os
 
 def register(request):
     if request.method == "POST":
        # receive payload setp1
-      
-
+    
         first_name = request.POST.get("first_name")
         last_name = request.POST.get("last_name")
         email = request.POST.get("email")
@@ -59,9 +40,6 @@ def register(request):
         
 
        # cretae db model
-
-     
-
 
         # Create user
         user = Customer.objects.create_user(
@@ -105,31 +83,10 @@ def user_login(request):
             messages.error(request,"Sorry incorrect password")
     return render(request, 'users/login.html')
 
-        # user = authenticate(request, email=email, password=password)
-
-        # if user is not None:
-        #     login(request, user)
-        #     return redirect("home")   # or dashboard
-        # else:
-        #     return render(request, "users/login.html", {
-        #         "error": "Invalid email or password"
-        #     })
     
     return render(request, "users/login.html")
     
 
-# def user_login(request):
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-#         password = request.POST.get('password')
-#         print(email,password)
-
-#         user = authenticate(request,email= email, password=password)
-#         if user is not None:
-#             login(request,user)
-            
-#             return redirect('home')
-#     return render(request, 'users/login.html')
 
 @login_required
 def user_logout(request):
@@ -142,7 +99,23 @@ def user_home(request):
 @login_required
 def user_profile(request):
     customer = request.user
-    return render(request, 'users/profile.html',{'customer':customer})
+
+    if request.method == "POST":
+        customer.first_name = request.POST.get("first_name")
+        customer.last_name = request.POST.get("last_name")
+        customer.phone_number = request.POST.get("phone_number")
+        customer.city = request.POST.get("city")
+
+        dob_value = request.POST.get("dob")
+        if dob_value == "" or dob_value is None:
+            customer.dob = None
+        else:
+            customer.dob = dob_value
+
+        customer.save()
+        return redirect("profile")
+
+    return render(request, 'users/profile.html', {'customer': customer})
 
 @login_required
 def update_profile_image(request):
@@ -154,8 +127,7 @@ def update_profile_image(request):
         return redirect("profile")
     
 
-from django.contrib.auth.decorators import login_required
-import os
+
 
 @login_required
 def delete_profile_image(request):
