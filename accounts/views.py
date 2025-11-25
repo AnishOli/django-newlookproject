@@ -1,13 +1,18 @@
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout,authenticate
-from .forms import CustomerRegistrationForm
+
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth import get_user_model
-from accounts.models import Customer
+from accounts.models import  Customer
+from blog.models import  Blog
 from django.contrib.auth.hashers import check_password
 import os
+
+#for email verfiy
+from django.conf import settings
+from django.core.mail import send_mail
 
 def register(request):
     if request.method == "POST":
@@ -53,9 +58,13 @@ def register(request):
             
             
         )
-        print(user)
-        
         messages.success(request, "Account created successfully!")
+        # subject = "Your accounts need to verified"
+        # message =f'hi{Customer.first_name}, Check you email to verify'
+        # email_form= settings.EMAIL_HOST_USER
+        # recipient_list= [Customer.email,]
+        # send_mail(subject, message,email_form,recipient_list)
+
         return redirect("login")
 
     return render(request, "users/register.html")
@@ -84,7 +93,7 @@ def user_login(request):
     return render(request, 'users/login.html')
 
     
-    return render(request, "users/login.html")
+    
     
 
 
@@ -94,8 +103,8 @@ def user_logout(request):
     return redirect('home')
 
 def user_home(request):
-    return render(request, 'users/home.html')
-
+    blogs = Blog.objects.all()
+    return render(request, "home.html", {"blogs": blogs})
 @login_required
 def user_profile(request):
     customer = request.user
@@ -145,3 +154,9 @@ def delete_profile_image(request):
     user.save()
 
     return redirect("profile")
+
+
+
+
+
+

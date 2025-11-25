@@ -1,0 +1,14 @@
+{% extends 'home.html' %}
+{% block content %}
+<div class="container">
+    <h2>{{ blog.title }}</h2>
+
+    <p><b>By:</b> {{ blog.user.first_name }} | {{ blog.created_at }}</p>
+
+    {% if blog.image %}
+        <img src="{{ blog.image.url }}" width="400" class="mb-3">
+    {% endif %}
+
+    <p>{{ blog.content }}</p>
+</div>
+{% endblock %}

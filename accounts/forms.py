@@ -35,3 +35,5 @@ class CustomerRegistrationForm(forms.ModelForm):
         if cleaned.get("password1") != cleaned.get("password2"):
             raise forms.ValidationError("Passwords do not match")
         return cleaned
+
+
